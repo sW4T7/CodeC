@@ -1,0 +1,355 @@
+#include <stdio.h> ++++++++++++++++++++++++
+#include <stdlib.h> 
+#include <math.h> 
+#include <time.h>
+#include <locale.h>
+#include <stdbool.h>
+#define maxsize 150000 
+#define minsize 20 
+
+// Обменивает величины двух переменных
+void swap(int *a, int *b)
+{
+	int t;
+	t = *a; *a = *b; *b = t;
+}
+
+// Копирование исходного массива
+void copy(int a[], int b[], int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+		b[i] = a[i];
+}
+
+// Копирование из исходного массива
+void un_copy(int a[], int b[], int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+		a[i] = b[i];
+}
+
+// Ввод массива
+// case 1: 
+int input(int a[])
+{
+	int i, j;
+	int n;
+	do
+	{
+		printf("Введите количество элементов в массиве: ");
+		scanf("%d", &n);
+	} while ((n > maxsize) || (n < 1));
+
+	// Самостоятельно вводим значения массива 
+	// от 1 до minsize 
+	printf("Вводите значения: ");
+	if ((n < minsize) && (n > 1))
+	{
+		for (j = 0; j < n; j++)
+			scanf("%d", &a[j]);
+	}
+
+	// Производиться случайный набор значений массива 
+	// от minsize до maxsize 
+	else
+	{
+		for (i = 0; i < n; i++)
+			a[i] = rand();
+	}
+
+	printf("Массив заполнен: ");
+	return n;
+}
+
+// Вывод массива
+void output(int a[], int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+		printf("%d ", a[i]);
+}
+
+// Сортировка линейного массива 
+// case 2: 
+void linear_sort(int a[], int n)
+{
+	int i, j, tmp;
+	int min; 
+
+	for (i = 0; i < n - 1; ++i)
+	{
+		min = i;
+		for (j = i + 1; j < n; ++j)
+		{
+			if (a[j] < a[min])
+				min = j;
+		}
+		swap(&(a[i]), &(a[min]));
+	}
+}
+
+// Сортировка пузырьком (+)
+// case 3
+void bubble_sort(int a[], int n)
+{
+	int k, i, tmp;
+	bool inverse = true;
+	k = 0;
+	while (inverse)
+	{
+		inverse = false;
+		for (i = 0; i < n - 1 - k; i++)
+		{
+			if (a[i] > a[i + 1])
+			{
+				swap(&(a[i]), &(a[i + 1])); 
+				inverse = true;
+			}
+		}
+		k++;
+	}
+}
+
+// Сортировка вставкой 
+// case 4:
+void sort_add(int a[], int n)
+{
+	int i, j, x;
+
+	for (i = 0; i < n; i++) {  
+		x = a[i];
+		for (j = i - 1; j >= 0 && a[j] > x; j--)
+			a[j + 1] = a[j]; 
+		a[j + 1] = x; 
+	}
+}
+
+// Сортировка Шелла 
+// case 5:
+void Shell_sort(int a[], int n) {
+	int gap, i, j, temp;
+
+	for(gap = n/2; gap > 0; gap /= 2) {
+		for(i = gap; i < n; i++) {
+			for(j = i - gap; j >= 0 && a[j] > a[j + gap]; j -= gap) {
+				temp = a[j];
+				a[j] = a[j + gap];
+				a[j + gap] = temp;
+			}
+		}
+	}
+}
+
+// Линейный поиск 
+// case 6:
+int linear_poisk(int a[], int n, int x)
+{
+	int i, index;
+
+	index = -1;
+	for (i = 0; i < n; i++) {
+		if (x == a[i]) {
+			index = i;
+		}
+	}
+	return index;
+}
+
+// Бинарный поиск 
+// case 7:
+int bin_found(int a[], int n, int x)
+{
+	int low, high, mid;
+	int index, i;
+
+	low = 0;
+	high = n - 1;
+	index = -1;
+
+	while (low <= high)
+	{
+		mid = (low + high) / 2;
+
+		if (x == a[mid])
+		{
+			index = mid;
+			break;
+		}
+		else if (x > a[mid])
+			low = mid + 1;
+		else
+			high = mid - 1;
+	}
+
+	return index;
+}
+
+int main() {
+	int answer;
+	int asort; // Переменные для case: 
+	int x, asize1;
+
+	int a[maxsize], b[maxsize], asize, i; // case 1: 
+	int rez5, x5; // case 6
+	int rez6, x6; // case 7
+	int t, ti, tt1, tt2, tt3, tt4; // case 8
+
+	int enter, sort;
+	enter = sort = 0; // флажки на ввод и на сортировку 
+
+
+	do {
+		// Предложения и запросы для пользователя
+		printf("ввод массива - 1\n");
+		printf("линейная сортировка - 2\n"); 
+		printf("сортировка пузырьком - 3\n");
+		printf("сортировка вставкой - 4\n"); 
+		printf("сортировка Шелла - 5\n"); 
+		printf("линейный поиск - 6\n");
+		printf("бинарный поиск - 7\n");
+		printf("сравнение сортировок - 8\n");
+		printf("выход - 9\n\n");
+		printf("Введите значение: ");
+		do {
+			scanf("%d", &answer);
+		} while ((answer < 0) && (answer > 9));
+
+		switch (answer)
+		{
+		case 1:
+			enter = 1; // устанавливаем флажок на ввод
+			sort = 0;
+			asize = input(a);
+			copy(a, b, asize);
+			//output(a, asize);  // выводит массив на экран консоли
+			printf("\n\n");
+			break;
+
+		case 2:
+			if (enter == 1)
+			{
+				un_copy(a, b, asize);
+				linear_sort(a, asize);
+				printf("отсортированный массив: ");	
+				output(a, asize);
+				printf("\n\n");
+				sort = 1;
+			}
+			else printf("необходимо выполнить \"ввод массива - 1\"\n\n");
+			break;
+
+		case 3:
+			if (enter == 1)
+			{
+				un_copy(a, b, asize);
+				bubble_sort(a, asize);
+				printf("отсортированный массив: ");
+				output(a, asize);
+				printf("\n\n");
+				sort = 1;
+			}
+			else printf("необходимо выполнить \"ввод массива - 1\"\n\n");
+			break;
+
+		case 4:
+			if (enter == 1)
+			{
+				un_copy(a, b, asize);
+				sort_add(a, asize);
+				printf("отсортированный массив: ");
+				output(a, asize);
+				printf("\n\n");
+				sort = 1;
+			}
+			else printf("необходимо выполнить \"ввод массива - 1\"\n\n");
+			break;
+
+		case 5:
+			if (enter == 1) 
+			{
+				un_copy(a, b, asize);
+				Shell_sort(a, asize);
+				printf("отсортированный массив: ");
+				output(a, asize);
+				printf("\n\n");
+				sort = 1;
+			}	
+			break;
+		
+		case 6:
+			if (enter == 1)
+			{
+				un_copy(a, b, asize);
+				printf("введите число: ");
+				scanf("%d", &x5);
+				rez5 = linear_poisk(a, asize, x5);
+
+				if (rez5 == -1)
+					printf("нет такого элемента\n\n");
+				else
+					printf("ответ: %d\n\n", rez5);
+			}
+			else printf("необходимо выполнить \"ввод массива - 1\"\n\n");
+			break;
+
+		case 7: 
+			if ((sort == 1) && (enter == 1))
+			{
+				printf("введите искомое число: ");
+				scanf("%d", &x6);
+				rez6 = bin_found(a, asize, x6);
+
+				if (rez6 == -1)
+					printf("нет такого элемента\n\n");
+				else
+					printf("ответ: %d\n\n", rez6);
+			}
+			else printf("вам необходимо:\n1)выполнить \"ввод массива - 1\"\n2)отсортировать его любой предложенной сортировкой\n\n");
+			break;
+
+		case 8:
+			if (enter == 1)
+			{
+				un_copy(a, b, asize);
+				t = time(NULL);
+				linear_sort(a, asize);
+				ti = time(NULL);
+				tt1 = ti - t;
+				printf("время линейной сортировки: %d сек\n", tt1);
+
+				un_copy(a, b, asize);
+				t = time(NULL);
+				bubble_sort(a, asize);
+				ti = time(NULL);
+				tt2 = ti - t;
+				printf("время сортировки пузырьком: %d сек\n", tt2);
+
+				un_copy(a, b, asize);
+				t = time(NULL);
+				sort_add(a, asize);
+				ti = time(NULL);
+				tt3 = ti - t;
+				printf("время сортировки вставкой: %d сек\n", tt3);
+
+				un_copy(a, b, asize);
+				t = time(NULL);
+				Shell_sort(a, asize);
+				ti = time(NULL);
+				tt4 = ti - t;
+				printf("время сортировки Шелла %d ceк \n\n", tt4);			
+
+			}
+			else printf("необходимо выполнить \"ввод массива - 1\"\n\n");
+			break;
+
+		case 9:
+			printf("завершение работы с меню\n");
+			break;
+		}
+	} while (answer != 9);
+
+	system("pause");
+	return 0;
+}
